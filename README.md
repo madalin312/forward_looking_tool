@@ -16,7 +16,7 @@ Make sure you have [node.js and npm](https://nodejs.org/en/download/) installed 
 
 ```ps
 # Clone the repository
-git clone https://github.com/RO010000894_EYGS/ForwardLookingTool
+git clone https://github.com/madalin312/forward_looking_tool
 
 cd ForwardLookingTool
 
