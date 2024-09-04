@@ -1,0 +1,21 @@
+/**
+ * @see https://www.electron.build/configuration/configuration
+ */
+{
+	appId: 'ForwardLookingTool',
+	asar: false,
+	directories: {
+		output: 'release'
+	},
+	files: ['dist', 'python'],
+	win: {
+		target: [
+			{
+				target: 'portable',
+				arch: ['x64']
+			}
+		],
+		publish: null,
+		artifactName: '${productName}_${version}.${ext}'
+	}
+}
