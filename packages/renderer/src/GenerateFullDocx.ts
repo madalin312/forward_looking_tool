@@ -38,7 +38,7 @@ export default async function generateFullDocx(
 		segmentidx++
 		return segmentidx
 	}
-
+	
 	const tempPath = await fs.mkdtemp(path.join(os.tmpdir(), 'fwldg-'))
 
 	const extractSubstringFromFile = async (filePath: string): Promise<string> => {
@@ -61,7 +61,6 @@ export default async function generateFullDocx(
 		let transposed: Record<string, any>[] = [];
 		let allKeys = new Set<string>();
 
-		// Collect all keys (column headers)
 		jsonArray.forEach(item => {
 			Object.keys(item).forEach(key => allKeys.add(key));
 		});
@@ -70,7 +69,6 @@ export default async function generateFullDocx(
 			throw new Error("No columns in the json array!")
 		}
 
-		// Initialize object for each key
 		allKeys.forEach(() => {
 			transposed.push({})
 		});
@@ -133,9 +131,7 @@ export default async function generateFullDocx(
 		const portfolio = p.dir.split('_H').slice(0, -1).join('_H')
 		const dir = path.join(baseDir, p.dir)
 		const files = await fs.readdir(dir)
-
 		let summary = ''
-
 		await new Promise<void>((resolve, reject) => {
 			const process = spawn(
 				path.join(venvPath, 'Scripts', 'python.exe'),
@@ -156,7 +152,7 @@ export default async function generateFullDocx(
 				reject(e)
 			})
 		})
-
+		
 		summary = summary.trim()
 
 		const executiveSummaryFile = files.find(file => file.startsWith("executive_summary_model_"))
@@ -193,10 +189,11 @@ export default async function generateFullDocx(
 			if (val < 0.1) return '*'
 			return ''
 		}
-
+		
 		const stationarity = readExcel(getExcel('04.'))
 		const finalSubset = readExcel(getExcel('08.'))
 		const final = readExcel(getExcel('12.'))
+		const sensitivity = readExcel(getExcel('13.'))
 		const variableDescription = readExcel(path.join(templatesPath, 'transformation_variable_description_v2.xlsx'))[0]
 		variableDescription["diff2"] = "the second absolute difference"
 		const championModel = final[p.modelRow]
@@ -415,11 +412,17 @@ export default async function generateFullDocx(
 						stationarityFileName : path.basename(getExcel('04')),
 						finalSubsetFileName : path.basename(getExcel('08')),
 						finalFeasibleFileName : path.basename(getExcel('12')),
+						sensitivityAnalysisFileName : path.basename(getExcel('13.')),
 						championModelRow: p.modelRow,
 						comparisonModelRow1: p.comparisonModelRow1,
 						comparisonModelRow2: p.comparisonModelRow2,
 						dependent: championModel['Dependent'],
-						portfolio
+						sensitivity_model_number: sensitivity[0]['Model_number'],
+						sensitivity_dependent_var: sensitivity[0]['Dependent'],
+						sensitivity_temp_list: sensitivity[0]['Independent'],
+						percentage: sensitivity[0]['Percentage'],
+						sensitivityTable: sensitivity,
+						portfolio,
 					}).map(([k, v]) => [k, (v == null && 'N/A') || v])
 				)
 			)
@@ -462,12 +465,17 @@ export default async function generateFullDocx(
 			path.join(tempPath, incrSegment() + '.docx')
 			// ,true
 		)
+
+		await fmtTemplate(
+			'template_4.docx',
+			path.join(tempPath, incrSegment() + '.docx')
+		)
 	}
 	let segments = (await fs.readdir(tempPath))
 		.sort()
 		.map((x) => path.join(tempPath, x))
 
-	segments = [segments[0], segments[2], segments[1]]
+	segments = [segments[0], segments[3], segments[2], segments[1]]
 
 	await new Promise<void>((resolve, reject) => {
 		const process = spawn(path.join(templatesPath, 'DocxMerge.exe'), [

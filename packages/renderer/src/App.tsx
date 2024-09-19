@@ -18,8 +18,7 @@ import FieldHelp from './Components/FieldHelp'
 import os from 'node:os'
 import logo from './logo.svg'
 import DocModal from './Components/DocModal'
-
-const delay = promisify(setTimeout)
+import SensitivityModal from './Components/SensitivityModal'
 
 interface Props {}
 interface State {
@@ -244,7 +243,7 @@ export default class App extends Component<Props, State> {
 								<h1 class="font-bold text-xl">Entity Type</h1>
 								<p>
 									Choose the type of the entity. Currently
-									implemented types are Normal, BBVA and BT (Banca
+									implemented types are Normal and BT (Banca
 									Transilvania)
 								</p>
 							</FieldHelp>
@@ -262,8 +261,6 @@ export default class App extends Component<Props, State> {
 								Normal
 							</option>
 							<option value="bt">BT</option>
-							<option value="bbva">BBVA</option>
-							<option value="optimized">Optimized</option>
 						</select>
 					</div>
 					{mode == 'bt' && (
@@ -527,18 +524,36 @@ export default class App extends Component<Props, State> {
 						Run
 					</label>
 					<br />
-					{dirPath != null && (
-						<label
-							for="docmodal"
-							style={{
-								lineHeight: 2.5,
-								zIndex: 1,
-								fontSize: 14
-							}}
-							class="link text-base-300">
-							Generate Documentation
-						</label>
-					)}
+					<div>
+						{dirPath != null && (
+							<label
+								for="docmodal"
+								style={{
+									lineHeight: 2.5,
+									zIndex: 1,
+									fontSize: 14,
+									color: 'var(--text-color)'
+								}}
+								class="link text-base-300">
+								Generate Documentation
+							</label>
+						)}
+						&nbsp;
+						{dirPath != null && (
+							<label
+								for="sensitivitymodal"
+								style={{
+									lineHeight: 2.5,
+									zIndex: 1,
+									fontSize: 14,
+									color: 'var(--text-color)'
+								}}
+								class="link text-base-300">
+								Sensitivity
+							</label>
+						)}
+					</div>
+					
 				</form>
 				<div
 					style={{
@@ -596,6 +611,7 @@ export default class App extends Component<Props, State> {
 					}}
 				/>
 				<DocModal baseDir={dirPath} />
+				<SensitivityModal baseDir={dirPath}/>
 				<HypoModal
 					onHypo={(hypo) => {
 						this.setState({

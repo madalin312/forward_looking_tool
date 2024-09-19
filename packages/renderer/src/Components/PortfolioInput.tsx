@@ -18,9 +18,9 @@ export default class PortfolioInput extends Component<Props, State> {
 			<div
 				class="form-control"
 				style={{
-					display: 'inline-block',
+					display: 'flex',
 					position: 'relative',
-					width: 200,
+					width: "100%",
 					margin: '0 10px'
 				}}>
 				<label class="label">
@@ -34,6 +34,9 @@ export default class PortfolioInput extends Component<Props, State> {
 							'input input-bordered w-full' +
 							((this.props.invalid && ' input-error') || '')
 						}
+						style={{
+							width: '100%'
+						}}
 						disabled={this.props.path == null}
 						onClick={async () => {
 							if (this.props.path == null) return
@@ -52,7 +55,8 @@ export default class PortfolioInput extends Component<Props, State> {
 					<ul
 						ref={this.ref}
 						style={{
-							marginTop: 10
+							marginTop: 10,
+							width: "100%"
 						}}
 						tabIndex={0}
 						class="dropdown-content menu p-2 shadow bg-base-100 rounded-box dropdownOptions">
