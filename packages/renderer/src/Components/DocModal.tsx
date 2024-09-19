@@ -20,66 +20,83 @@ export default function DocModal({ baseDir }: { baseDir?: string }) {
 					style={{
 						textAlign: 'center'
 					}}>
+					<h2>Generate documentation</h2>
 					<div
 						style={{
-							textAlign: 'left'
+							textAlign: 'left',
+							width: 400,
+							marginLeft: 25
 						}}>
-						<PortfolioInput
-							portfolio={portfolio}
-							path={baseDir}
-							onChange={(x) => setPortfolio(x)}
-						/>
-						<br />
 						<div
 							class="form-control"
 							style={{
 								display: 'inline-block',
 								position: 'relative',
-								width: 200,
 								margin: '0 10px'
 							}}>
-							<label class="label">
-								<span class="label-text">Champion Model Row #</span>
-							</label>
-							<input
-								min={1}
-								type="number"
-								onChange={(e) =>
-									(modelRow.current = Number(
-										e.currentTarget.value
-									))
-								}
-								required
-								class={'input input-bordered w-full'}
+							<PortfolioInput
+								portfolio={portfolio}
+								path={baseDir}
+								onChange={(x) => setPortfolio(x)}
 							/>
-							<label class="label">
-								<span class="label-text">Comparison Model 1 Row #</span>
-							</label>
-							<input
-								min={1}
-								type="number"
-								onChange={(e) =>
-									(comparisonModelRow1.current = Number(
-										e.currentTarget.value
-									))
-								}
-								required
-								class={'input input-bordered w-full'}
-							/>
-							<label class="label">
-								<span class="label-text">Comparison Model 2 Row #</span>
-							</label>
-							<input
-								min={1}
-								type="number"
-								onChange={(e) =>
-									(comparisonModelRow2.current = Number(
-										e.currentTarget.value
-									))
-								}
-								required
-								class={'input input-bordered w-full'}
-							/>
+							<div
+								style={{
+									display: 'flex',
+									justifyContent: 'left-right',
+									gap: '20px',
+									marginTop: '20px',
+									marginLeft: '0px'
+								}}>
+								<div style={{ width: "33%", marginLeft: 10 }}>
+									<label class="label">
+										<span class="label-text">Champion Model Row #</span>
+									</label>
+									<input
+										min={2}
+										type="number"
+										onChange={(e) =>
+										(modelRow.current = Number(
+											e.currentTarget.value
+										))
+										}
+										required
+										class={'input input-bordered w-full'}
+									/>
+								</div>
+								<div style={{width: "33%", marginLeft: 10 }}>
+									<label class="label">
+										<span class="label-text">Comparison Model 1 Row #</span>
+									</label>
+									<input
+										min={2}
+										type="number"
+										onChange={(e) =>
+										(comparisonModelRow1.current = Number(
+											e.currentTarget.value
+										))
+										}
+										required
+										class={'input input-bordered w-full'}
+									/>
+								</div>
+								<div style={{width: "33%", marginLeft: 10 }}>
+									<label class="label">
+										<span class="label-text">Comparison Model 2 Row #</span>
+									</label>
+									<input
+										min={2}
+										type="number"
+										onChange={(e) =>
+										(comparisonModelRow2.current = Number(
+											e.currentTarget.value
+										))
+										}
+										required
+										class={'input input-bordered w-full'}
+									/>
+								</div>
+							</div>
+
 						</div>
 					</div>
 					<label
@@ -102,7 +119,7 @@ export default function DocModal({ baseDir }: { baseDir?: string }) {
 							}
 						}}
 						style={{
-							marginTop: 100
+							marginTop: 20
 						}}>
 						{(loading && '...') || 'generate'}
 					</label>

@@ -157,6 +157,26 @@ try:
     data_diff = dataset.loc[:, dataset.columns!='Date'].diff(periods=1, axis=0)
     data_diff = data_diff.add_suffix('_diff')
 
+
+    # Cube root on initial dataframe applied on all data series
+    data_cuberoot = pd.DataFrame(columns = pd.Series((dataset.loc[:,dataset.columns != 'Date']).add_suffix('_cuberoot').columns))
+    for i in range (0,len(data_cuberoot.columns)-1):
+        data_cuberoot.iloc[:,i] = np.cbrt(dataset.iloc[:,(i+1)]) 
+    # the last column is not calculated based on the loop, so it will be computed separately
+    data_cuberoot.iloc[:,len(data_cuberoot.columns)-1] = np.cbrt(dataset.iloc[:,len(dataset.columns)-1])
+
+    # Difference of cube root dataframe
+    data_cuberootdiff = data_cuberoot.diff(periods=1, axis=0)
+    data_cuberootdiff = data_cuberootdiff.add_suffix('_diff')
+
+
+    # Annual absolute difference applied on independent only
+    data_macro = pd.DataFrame(dataset.loc[:,dataset.columns[pd.Series(dataset.columns).str.startswith('x')]])
+
+
+    data_diffa = data_macro.loc[:, data_macro.columns!='Date'].diff(periods=4, axis=0)
+    data_diffa = data_diffa.add_suffix('_diffa')
+
     # Square root on initial dataframe/applied only on dependent var
     data_sqrt = pd.DataFrame(columns = pd.Series((data_dep.loc[:,data_dep.columns != 'Date']).add_suffix('_sqrt').columns))
     for i in range (0,len(data_sqrt.columns)-1):
@@ -165,8 +185,8 @@ try:
     data_sqrt.iloc[:,len(data_sqrt.columns)-1] = np.sqrt(data_dep.iloc[:,len(data_dep.columns)-1])
 
     # Difference of difference
-    data_diff2 = (dataset.loc[:, dataset.columns!='Date'].diff(periods=1, axis=0)).diff(periods=1, axis=0)
-    data_diff2 = data_diff2.add_suffix('_diff_diff')
+    #data_diff2 = (dataset.loc[:, dataset.columns!='Date'].diff(periods=1, axis=0)).diff(periods=1, axis=0)
+    #data_diff2 = data_diff2.add_suffix('_diff_diff')
 
     # Logit transformation: The logit function is defined as logit(p) = log(p/(1-p)). Note that logit(0) = -inf, logit(1) = inf, and logit(p) for p<0 or p>1 yields nan.
     #/applied only on dependent var
@@ -180,6 +200,15 @@ try:
     data_logitdiff = data_logit.diff(periods=1, axis=0)
     data_logitdiff = data_logitdiff.add_suffix('_diff')
 
+    # Natural logarithm tranformation applied on dependent only
+    data_log = np.log(data_dep.loc[:, data_dep.columns != 'Date'] )
+    data_log = data_log.add_suffix('_log')
+
+
+    # Difference of log dataframe
+    data_logdiff = data_log.diff(periods=1, axis=0)
+    data_logdiff = data_logdiff.add_suffix('_diff')
+
     # reciprocal
     data_reciprocal = pd.DataFrame(columns = pd.Series((dataset.loc[:,dataset.columns != 'Date']).add_suffix('_reciprocal').columns))
     for i in range (0,len(data_reciprocal.columns)-1):
@@ -188,7 +217,7 @@ try:
     data_reciprocal.iloc[:,len(data_reciprocal.columns)-1] = 1/(dataset.iloc[:,len(dataset.columns)-1])
 
     # Merge all dataframes containing transformed variables with the initial dataset
-    dataset = pd.concat([dataset, data_diff, data_diff2, data_logit, data_logitdiff, data_change, data_sqrt, data_reciprocal], axis=1)
+    dataset = pd.concat([dataset, data_diff, data_logit, data_logitdiff, data_change, data_sqrt, data_reciprocal, data_diffa, data_log, data_logdiff, data_cuberoot, data_cuberootdiff], axis=1) #REMOVED: diff_diff; ADDED: diffa, log, log_diff, cuberoot, cuberoot_diff
 
     # Delete the columns which are entirely with missing values
     dataset = dataset.dropna(axis='columns', how='all')
